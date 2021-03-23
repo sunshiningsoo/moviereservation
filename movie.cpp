@@ -72,25 +72,51 @@ int** realReserve(int** &movie,const int row, const int col, int &reserveNum, in
 }
 
 
-int** cancel(int** &movie, int &reserveNum, char &x,char &y, int &i){
-    if(movie[x-'A'][y-'1'] == i){
-        movie[x-'A'][y-'1'] = false;
-        cout<<"예약 취소가 되었습니다.\n";
-        reserveNum += 1;
-    }else{
-        cout<<"입력하신 예약 정보가 없습니다."<<endl;
+int** cancel(int** &movie, int &reserveNum, char &x,char &y, int &i, int &row,int &col){
+    for(int j=0;j<row;j++) {
+        for(int k=0;k<col;k++) {
+            if (movie[j][k] == i) {
+                movie[j][k] = false;
+                cout << "예약 취소가 되었습니다.\n";
+                reserveNum += 1;
+            }
+        }
     }
     return movie;
 }
+//저장되는 값이 이전 값으로 저장되있
 
-
-void recheck(){
+void recheck(string movie1, int ** &movie, int &reserveNumber, char &x,char &y, int &row,int &col){
     cout<<"201811255 박성수 "<<endl;
     cout<<"확인 하려는 예약번호를 알려주세요 : ";
-//    int i;
-//    cin>>i;
-//    cout<<"예약된 영화 : "<<movie1<<endl;
-//    cout<<"좌석 넘버 : "<<x-'A'<<y-'1'<<endl;
+    int i;
+    cin>>i;
+    for(int j=0;j<row;j++) {
+        for(int k=0;k<col;k++) {
+            if (movie[j][k] == i) {
+                cout<<"예매하신 영화 :"<<movie1<<endl;
+                cout<<"예매하신 좌석 : "<<static_cast<char>(static_cast<char>(j)+'A')<<static_cast<char>(static_cast<char>(k)+'1')<<endl;
+                for(int a=0;a<col;a++){
+                    cout<<"\t"<<a+1;
+                }
+                cout<<"\n\n";
+                for(int l=0;l<row;l++){
+                    cout<<static_cast<char>('A'+l)<<"\t";
+                    for(int m=0;m<col;m++){
+                        if(l == j && m == k){
+                            cout<<"!"<<"\t";
+                        }else{
+                            cout<<"O"<<"\t";
+                        }
+                    }
+                    cout<<"\n\n";
+                }
+            }else{
+                cout<<"예약번호가 존재하지 않습니다."<<endl;
+                break;
+            }
+        }
+    }
 }
 
 void finish(int** &movie,const int row){
@@ -154,12 +180,14 @@ int main(){
             cout<<"취소하려는 예약번호를 작성해주세요 : ";
             int i;
             cin>>i;
-            cancel(movieArray1,reserveNum1, x,y, i);
-            cancel(movieArray2,reserveNum2, x,y, i);
-            cancel(movieArray3,reserveNum3, x,y, i);
+            cancel(movieArray1,reserveNum1, x,y, i,row1,col1);
+            cancel(movieArray2,reserveNum2, x,y, i,row2,col2);
+            cancel(movieArray3,reserveNum3, x,y, i,row3,col3);
             //여기 위에 수정해야함
         }else if(menuPick==3){
-            recheck();
+            recheck(movie1,movieArray1, reserveNumber, x,y,row1,col1);
+            recheck(movie2,movieArray2, reserveNumber, x,y,row2,col2);
+            recheck(movie3,movieArray3, reserveNumber, x,y,row3,col3);
         }else if(menuPick==4){
             cout<<"201811255 박성수 "<<endl;
             finish(movieArray1, row1);
