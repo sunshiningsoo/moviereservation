@@ -48,10 +48,8 @@ void showMovieMap(int** &movie,const int row, const int col){
 
 }
 
-int** realReserve(int** &movie,const int row, const int col, int &reserveNum){
-    cout<<"좌석 입력( ex==> A1 ) : ";
-    char x,y;
-    cin>>x>>y;
+int** realReserve(int** &movie,const int row, const int col, int &reserveNum, int &reservenumber, char x,char y){
+
     if(movie[x-'A'][y-'1']){
         cout<<"이미 예약된 자리입니다.\n";
     }
@@ -63,53 +61,39 @@ int** realReserve(int** &movie,const int row, const int col, int &reserveNum){
     }
     else{
         movie[x-'A'][y-'1'] = true;
-        int *ran = &movie[x][y];
         cout<<"자리예약이 되었습니다.\n";
         reserveNum -= 1;
-        cout<<"예약번호는 : "<<ran<<endl;
-
+        cout<<"예약 번호는 "<<reservenumber<<endl;
+        movie[x-'A'][y-'1'] = reservenumber;
+        reservenumber += 1;
 
     }
     return movie;
 }
 
-void initArray(int** (&arr)){
-    size_t row = malloc_size(arr) / sizeof(arr[0]);
-    size_t col = malloc_size(arr[0]) / sizeof(arr[0][0]);
-    int num = 0;
-    for(int i=0;i<row;i++){
-        for(int j=0;j<col;j++){
-            arr[i][j] = num++;
-        }
-    }
 
-    for(int i=0;i<100;i++){
-        int r1 = rand()%row;
-        int c1 = rand()%col;
-        int r2 = rand()%row;
-        int c2 = rand()%col;
-        if(r1 != r2 || c1!=c2){
-            int temp = arr[r1][c1];
-            arr[r1][c1] = arr[r2][c2];
-            arr[r2][c2] = temp;
-        }else
-            i--;
+int** cancel(int** &movie, int &reserveNum, char &x,char &y, int &i){
+    if(movie[x-'A'][y-'1'] == i){
+        movie[x-'A'][y-'1'] = false;
+        cout<<"예약 취소가 되었습니다.\n";
+        reserveNum += 1;
+    }else{
+        cout<<"입력하신 예약 정보가 없습니다."<<endl;
     }
+    return movie;
 }
 
-void cancel(){
-    cout<<"201811255 박성수 "<<endl;
-    cout<<"안녕 from cancel"<<endl;
-
-}
 
 void recheck(){
     cout<<"201811255 박성수 "<<endl;
-    cout<<"안녕 from recheck"<<endl;
-
+    cout<<"확인 하려는 예약번호를 알려주세요 : ";
+//    int i;
+//    cin>>i;
+//    cout<<"예약된 영화 : "<<movie1<<endl;
+//    cout<<"좌석 넘버 : "<<x-'A'<<y-'1'<<endl;
 }
 
-void finish(int** &movie,const int row, const int col){
+void finish(int** &movie,const int row){
     for(int i=0;i<row;i++){
         delete[] movie[i];
     }
@@ -124,6 +108,8 @@ int main(){
     int menuPick, movieNum, movieSelect;
     string movie1, movie2, movie3;
     int row1,row2,row3,col1,col2,col3,reserveNum1,reserveNum2,reserveNum3;
+    int reserveNumber = 1; // 예약번호 주는거
+    char x,y; // 입력인자 받는 거
 
     int* map = reservation(movieNum, movie1,movie2,movie3,row1,row2,row3,col1,col2,col3);
     int** movieArray1 = loadMap(row1, col1);
@@ -149,23 +135,36 @@ int main(){
             cin>> movieSelect;
             if(movieSelect == 1){
                 showMovieMap(movieArray1, row1, col1);
-                movieArray1 = realReserve(movieArray1, row1, col1, reserveNum1);
+                cout<<"좌석 입력( ex==> A1 ) : ";
+                cin>>x>>y;
+                movieArray1 = realReserve(movieArray1, row1, col1, reserveNum1, reserveNumber,x,y);
             }else if(movieSelect == 2){
                 showMovieMap(movieArray2, row2, col2);
-                movieArray2 = realReserve(movieArray2, row2, col2, reserveNum2);
+                cout<<"좌석 입력( ex==> A1 ) : ";
+                cin>>x>>y;
+                movieArray2 = realReserve(movieArray2, row2, col2, reserveNum2,reserveNumber, x,y);
             }else if(movieSelect ==3){
                 showMovieMap(movieArray3, row3, col3);
-                movieArray3 = realReserve(movieArray3, row3, col3, reserveNum3);
+                cout<<"좌석 입력( ex==> A1 ) : ";
+                cin>>x>>y;
+                movieArray3 = realReserve(movieArray3, row3, col3, reserveNum3, reserveNumber,x,y);
             }
         }else if(menuPick==2){
-            cancel();
+            cout<<"201811255 박성수 "<<endl;
+            cout<<"취소하려는 예약번호를 작성해주세요 : ";
+            int i;
+            cin>>i;
+            cancel(movieArray1,reserveNum1, x,y, i);
+            cancel(movieArray2,reserveNum2, x,y, i);
+            cancel(movieArray3,reserveNum3, x,y, i);
+            //여기 위에 수정해야함
         }else if(menuPick==3){
             recheck();
         }else if(menuPick==4){
             cout<<"201811255 박성수 "<<endl;
-            finish(movieArray1, row1,col1);
-            finish(movieArray2, row2,col2);
-            finish(movieArray3, row3,col3);
+            finish(movieArray1, row1);
+            finish(movieArray2, row2);
+            finish(movieArray3, row3);
             cout<<"프로그램을 종료합니다.";
             option = false;
         }
